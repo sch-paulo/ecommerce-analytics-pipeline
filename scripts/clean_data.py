@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from config.country_map import COUNTRY_MAP
 
 
@@ -7,7 +8,7 @@ def clean_and_transform_data(df: pd.DataFrame):
 
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
     df["CustomerID"] = (
-        df["CustomerID"].fillna(0).astype(int).astype(str).replace("0", "NA")
+        df['CustomerID'].fillna(0).astype(int)
     )
 
     description_mapping = (
@@ -21,7 +22,7 @@ def clean_and_transform_data(df: pd.DataFrame):
     df["Description"] = df["Description"].fillna("UNKNOWN PRODUCT")
 
     df["CustomerType"] = "Client"
-    df.loc[df["CustomerID"] == "NA", "CustomerType"] = "Guest"
+    df.loc[df["CustomerID"] == 0, "CustomerType"] = "Guest"
 
     df["TransactionType"] = "Sale"
     df.loc[df["Quantity"] < 0, "TransactionType"] = "Return/Cancellation"

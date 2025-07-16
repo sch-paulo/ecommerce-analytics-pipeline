@@ -21,7 +21,7 @@ class CountryModel(Base):
 class InvoiceModel(Base):
     __tablename__ = "invoices"
 
-    InvoiceNo = Column(Integer, primary_key=True, index=True)
+    InvoiceNo = Column(String, primary_key=True, index=True)
     InvoiceDate = Column(DateTime, index=True)
     CustomerID = Column(Integer, ForeignKey("customers.CustomerID"), index=True)
 
@@ -44,8 +44,8 @@ class ProductModel(Base):
 class TransactionModel(Base):
     __tablename__ = "transactions"
 
-    InvoiceNo = Column(Integer, ForeignKey("invoices.InvoiceNo"), index=True)
-    StockCode = Column(Integer, ForeignKey("products.StockCode"), index=True)
+    InvoiceNo = Column(String, ForeignKey("invoices.InvoiceNo"), index=True)
+    StockCode = Column(String, ForeignKey("products.StockCode"), index=True)
     LineNo = Column(Integer, index=True)
     Quantity = Column(Integer, index=True)
     UnitPrice = Column(Float, index=True)
