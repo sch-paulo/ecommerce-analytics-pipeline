@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from config.country_map import COUNTRY_MAP
 
 
