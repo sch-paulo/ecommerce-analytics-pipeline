@@ -8,7 +8,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint
 )
 
-from scripts.database import Base
+from src.database import Base
 
 
 class CountryModel(Base):

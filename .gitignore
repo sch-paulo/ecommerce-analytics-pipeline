@@ -1,4 +1,5 @@
 *.csv
-*.zip
 *.lock
 .env
+__pycache__
+.venv

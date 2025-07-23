@@ -19,6 +19,39 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+    ports:
+      - "8501:8501"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      etl:
+        condition: service_completed_successfully
+    networks:
+      - ecommerce_network
+    env_file:
+      - .env
+
+  etl:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+    command: ["python", "src/load_to_db.py"]
+    env_file:
+      - .env
+
 volumes:
   postgres_data:
 
