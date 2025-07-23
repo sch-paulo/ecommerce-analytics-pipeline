@@ -2,12 +2,16 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
 import os
+import plotly.graph_objects as go
+import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
 
+POSTGRES_DB = os.getenv("POSTGRES_DB")
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
+POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 
 POSTGRES_DATABASE_URL = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
@@ -140,15 +144,93 @@ df = run_query(query)
 # Show as table
 st.dataframe(df, use_container_width=True)
 
-# Optional visualizations:
+# Visualizations:
 if section == "Monthly Revenue Trends":
-    st.line_chart(df.set_index("month_year")["total_revenue"])
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=df["month_year"],
+        y=df["total_revenue"],
+        name="Total Revenue",
+        marker_color='steelblue',
+        yaxis="y1"
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=df["month_year"],
+        y=df["avg_order"],
+        name="Average Order",
+        mode="lines+markers",
+        marker_color='orange',
+        yaxis="y2"
+    ))
+
+    fig.update_layout(
+        title="Monthly Revenue Trends",
+        xaxis_title="Month",
+        yaxis=dict(title="Total Revenue", side='left'),
+        yaxis2=dict(title="Average Order", overlaying='y', side='right'),
+        legend=dict(orientation="h")
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 elif section == "Top 15 Best-Selling Products":
-    st.bar_chart(df.set_index("description")["total_revenue"])
+    fig = px.bar(
+        df.sort_values("total_revenue"),  # Show highest at the top
+        x="total_revenue",
+        y="description",
+        orientation='h',
+        title="Top 15 Best-Selling Products",
+        labels={"total_revenue": "Total Revenue", "description": "Product"}
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 elif section == "RFM Analysis":
-    st.bar_chart(df.set_index("customer_id")["rfm_score_total"])
+    # Create Recency-Frequency Segment
+    df['recency_segment'] = pd.qcut(df['recency_score'], q=5, labels=False)
+    df['frequency_monetary_score'] = (df['monetary_score'] + df['frequency_score']) / 2
+    df['frequency_monetary_segment'] = pd.qcut(df['frequency_monetary_score'], q=5, labels=False)
+    
+
+    # Build Pivot Table: Count of Customers
+    rfm_pivot = df.pivot_table(
+        index='recency_segment',
+        columns='frequency_monetary_segment',
+        values='customer_id',
+        aggfunc='count'
+    ).fillna(0)
+
+    # Plot Heatmap using Seaborn
+    fig, ax = plt.subplots(figsize=(6, 4))
+    sns.heatmap(rfm_pivot, annot=True, fmt=".0f", cmap="YlOrRd", linewidths=.5, ax=ax)
+    ax.set_xlabel("Frequency + Monetary Segment (Mean)")
+    ax.set_ylabel("Recency Segment")
+    ax.set_title("RFM Matrix – Customers Concentration")
+
+    st.pyplot(fig)
 
 elif section == "Average Order by Country":
-    st.bar_chart(df.set_index("country")["avg_order"])
+    fig = px.choropleth(
+        df,
+        locations="country",
+        locationmode="country names",
+        color="avg_order",
+        hover_name="country",
+        color_continuous_scale=px.colors.sequential.speed,
+        title="Average Order Value by Country"
+    )
+    
+    fig.update_layout(
+        width=1200,
+        height=700, 
+        plot_bgcolor="#ffffff",
+        paper_bgcolor="#0f1116",
+        font_color="white",
+        geo=dict(
+            bgcolor="#0f1116"
+        )
+)
+    fig.update_geos(fitbounds="locations")
+    st.plotly_chart(fig, use_container_width=True)
