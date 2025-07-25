@@ -1,4 +1,4 @@
--- 3. Customer segmentation by purchase behavior
+-- 4. Customer segmentation by purchase behavior
 SELECT 
 	c.customer_id,
 	c.customer_type,
@@ -15,17 +15,8 @@ GROUP BY c.customer_id
 ORDER BY total_purchases DESC;
 	
 
---- 3.1 Total purchases, clients and orders per customer
-SELECT 
-	COUNT(DISTINCT t.invoice_no) AS total_purchases,
-	COUNT(DISTINCT c.customer_id) AS total_customers,
-	COUNT(DISTINCT t.invoice_no) / COUNT(DISTINCT c.customer_id) AS avg_order_per_customer
-FROM transactions t
-JOIN invoices i ON t.invoice_no = i.invoice_no
-JOIN customers c ON i.customer_id = c.customer_id;
 
-
---- 3.2 RFM analysis
+--- 4.1 RFM analysis
 WITH customer_rfm AS (
     SELECT
         c.customer_id,
@@ -74,59 +65,59 @@ ORDER BY
 
 
 
---- 3.3 Full RFM analysis considering dinamic thresholds (percentiles)
+--- 4.2 Full RFM analysis considering dinamic thresholds (percentiles)
 WITH customer_rfm_raw AS (
     SELECT
         c.customer_id,
         MAX(i.invoice_date) AS last_purchase_date,
         COUNT(DISTINCT t.invoice_no) AS frequency,
         SUM(t.total_amount)::numeric AS monetary
-    FROM
-        transactions t
+    FROM transactions t
     JOIN invoices i ON t.invoice_no = i.invoice_no
     JOIN customers c ON i.customer_id = c.customer_id
     WHERE c.customer_type != 'Guest'
-    GROUP BY
-        c.customer_id
+    GROUP BY c.customer_id
 ),
 latest_date AS (
-    SELECT MAX(invoice_date) AS latest_invoice_date
-    FROM invoices
+    SELECT MAX(invoice_date) AS latest_invoice_date FROM invoices
 ),
 customer_rfm AS (
     SELECT
         r.*,
         DATE_PART('day', l.latest_invoice_date - r.last_purchase_date) AS recency_days
-    FROM
-        customer_rfm_raw r
-    CROSS JOIN 
-        latest_date l
+    FROM customer_rfm_raw r
+    CROSS JOIN latest_date l
 ),
--- Rank customers in quantiles
 rfm_scores AS (
     SELECT
         customer_id,
         recency_days,
         frequency,
         monetary,
-        -- Recency Score (lower days = better)
-        NTILE(100) OVER (ORDER BY recency_days DESC) AS recency_score,
-        -- Frequency Score (higher frequency = better)
-        NTILE(100) OVER (ORDER BY frequency ASC) AS frequency_score,
-        -- Monetary Score (higher spend = better)
-        NTILE(100) OVER (ORDER BY monetary ASC) AS monetary_score
+        NTILE(5) OVER (ORDER BY recency_days DESC) AS recency_score,
+        NTILE(5) OVER (ORDER BY frequency ASC) AS frequency_score,
+        NTILE(5) OVER (ORDER BY monetary ASC) AS monetary_score
     FROM customer_rfm
+),
+rfm_labeled AS (
+    SELECT *,
+        CASE
+            WHEN (recency_score + frequency_score + monetary_score) >= 13 THEN '1. Champions'
+            WHEN (recency_score + frequency_score + monetary_score) >= 10 THEN '2. Loyal Customers'
+            WHEN (recency_score + frequency_score + monetary_score) >=8 THEN '3. Potential Loyalists'
+            WHEN (recency_score + frequency_score + monetary_score) >= 6 THEN '4. At Risk'
+            ELSE '5. Lost'
+        END AS segment
+    FROM rfm_scores
 )
-SELECT
-    customer_id,
-    recency_days,
-    frequency,
-    ROUND(monetary, 2) AS monetary,
-    recency_score,
-    frequency_score,
-    monetary_score,
-    (recency_score + frequency_score + monetary_score) AS rfm_score_total
-FROM
-    rfm_scores
-ORDER BY
-    rfm_score_total DESC;
+SELECT 
+    segment,
+    COUNT(*) AS total_customers,
+    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS percentage_customers,
+    ROUND(AVG(recency_days::numeric), 1) AS avg_recency_days,
+    ROUND(AVG(frequency), 1) AS avg_frequency,
+    ROUND(AVG(monetary), 2) AS avg_monetary
+FROM rfm_labeled
+GROUP BY segment
+ORDER BY segment;
+
