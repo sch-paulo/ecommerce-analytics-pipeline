@@ -20,13 +20,11 @@
 
 Um projeto simples desenvolvido para criar um pipeline para coleta de dados, configuração do banco de dados, analisar e visualizar dados de varejo.  
 **Objetivo:** Simular uma tarefa do mundo real para melhorar minhas habilidades de engenharia de dados.
-<br>
 
 ## Fontes de dados
 
 - **E-Commerce Data**: Disponível [no Kaggle](https://www.kaggle.com/datasets/carrie1/ecommerce-data).
 - Também está ena [pasta `data`](data) desse repositório, em formato ZIP.
-<br>
 
 ## Recursos e componentes
 
@@ -69,7 +67,6 @@ Um projeto simples desenvolvido para criar um pipeline para coleta de dados, con
 - **PostgreSQL**: Armazenamento de dados
 - **Streamlit**: Visualização de dados
 - **Docker**: Conteinerização de todas as dependências do projeto
-<br>
 
 ## Como rodar
 
@@ -77,7 +74,6 @@ Um projeto simples desenvolvido para criar um pipeline para coleta de dados, con
 Certifique-se de que tenha os seguintes componentes instalados: <br>
 - [Docker](https://docs.docker.com/get-started/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-<br>
 
 ### Executando o projeto
 1. **Clone o repositório**
@@ -114,7 +110,6 @@ Certifique-se de que tenha os seguintes componentes instalados: <br>
     - **Maintenance database:** `nome_db` <br> 
     - **Username:** `seu_usuario` <br> 
     - **Password:** `sua_senha`
-<br>
 
 ## Resultados e Insights
 ### 1. Tendências mensais de receita <br /> 
@@ -150,7 +145,6 @@ Para esta análise RFM, dividimos cada métrica (recência dos dias desde a últ
 - **Em risco**: Os clientes que não compraram há algum tempo, mas tiveram um bom histórico. Com uma recência média de 104 dias, baixa frequência (1,7 compra) e um valor monetário médio de \$392, eles precisam de campanhas de reengajamento para impedir que se tornem clientes perdidos.
 
 - **Perdidos**: Eles representam uma parte significativa da base de clientes que não comprou há muito tempo. Com uma recência média de 222 dias, frequência muito baixa (1,2 compra) e um gasto médio de apenas \$203, a estratégia para esse grupo pode ser tentar reativá-los com ofertas muito agressivas ou apenas focar os esforços em outros clientes mais lucrativos.
-<br>
 
 ## Estrutura do projeto
 ```graphql

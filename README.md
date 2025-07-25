@@ -20,13 +20,11 @@
 
 A simple project developed to create a pipeline for data collection, database setup, analyze and visualize retail data.  
 **Goal:** Simulate a real world task in order to improve my end-to-end data engineering skills.
-<br>
 
 ## Data Sources
 
 - **E-Commerce Data**: Available [here on Kaggle](https://www.kaggle.com/datasets/carrie1/ecommerce-data).
 - Also provided on [`data` folder](data) on ZIP format.
-<br>
 
 ## Key Features & Components
 
@@ -69,7 +67,6 @@ A simple project developed to create a pipeline for data collection, database se
 - **PostgreSQL**: Data storage
 - **Streamlit**: Data visualization
 - **Docker**: Containerization of all the project's steps
-<br>
 
 ## How to Run
 
@@ -77,7 +74,6 @@ A simple project developed to create a pipeline for data collection, database se
 Make sure you have the following components installed: <br>
 - [Docker](https://docs.docker.com/get-started/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-<br>
 
 ### Running the project
 1. **Clone the repository**
@@ -114,7 +110,6 @@ Make sure you have the following components installed: <br>
     - **Maintenance database:** `your_db_name` <br> 
     - **Username:** `your_user` <br> 
     - **Password:** `your_password`
-<br>
 
 ## Results & Insights
 ### 1. Monthly revenue trends <br /> 
@@ -148,7 +143,6 @@ For this analysis, we divided each RFM metric (Recency of days since last purcha
 - **At Risk**: Customers who have not purchased in a while but have had a good history. With an average recency of 104 days, low frequency (1.7 purchase), and an average monetary value of $392, they need re-engagement campaigns to prevent them from becoming “Lost”.
 
 - **Lost**: These represent a significant portion of the customer base that has not purchased in a long time. With an average recency of 222 days, very low frequency (1.2 purchase), and an average spend of only $203, the strategy for this group may be to try to reactivate them with very aggressive offers, or to focus efforts on other segments.
-<br>
 
 ## Project Structure
 ```graphql
