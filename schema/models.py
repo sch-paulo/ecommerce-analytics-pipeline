@@ -5,7 +5,7 @@ from sqlalchemy import (
     Float,
     DateTime,
     ForeignKey,
-    PrimaryKeyConstraint
+    PrimaryKeyConstraint,
 )
 
 from src.database import Base

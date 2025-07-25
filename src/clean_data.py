@@ -1,7 +1,9 @@
 import pandas as pd
 from config.country_map import COUNTRY_MAP
 import warnings
+
 warnings.filterwarnings("ignore")
+
 
 def clean_and_transform_data(df: pd.DataFrame):
     """
@@ -28,9 +30,7 @@ def clean_and_transform_data(df: pd.DataFrame):
     df = df.drop_duplicates()
 
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
-    df["CustomerID"] = (
-        df['CustomerID'].fillna(0).astype(int)
-    )
+    df["CustomerID"] = df["CustomerID"].fillna(0).astype(int)
 
     description_mapping = (
         df.dropna(subset=["Description"])
@@ -72,7 +72,7 @@ def normalize_table(df: pd.DataFrame):
         - invoices_table (InvoiceNo, InvoiceDate, CustomerID)
         - customers_table (CustomerID, CountryID, CustomerType)
         - products_table (StockCode, Description)
-        - transactions_table (InvoiceNo, StockCode, Quantity, UnitPrice, 
+        - transactions_table (InvoiceNo, StockCode, Quantity, UnitPrice,
           TotalAmount, TransactionType, LineNo)
     """
     countries_table = (
