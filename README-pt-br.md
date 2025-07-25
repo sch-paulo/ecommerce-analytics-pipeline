@@ -150,7 +150,6 @@ Para esta análise RFM, dividimos cada métrica (recência dos dias desde a últ
 - **Em risco**: Os clientes que não compraram há algum tempo, mas tiveram um bom histórico. Com uma recência média de 104 dias, baixa frequência (1,7 compra) e um valor monetário médio de \$392, eles precisam de campanhas de reengajamento para impedir que se tornem clientes perdidos.
 
 - **Perdidos**: Eles representam uma parte significativa da base de clientes que não comprou há muito tempo. Com uma recência média de 222 dias, frequência muito baixa (1,2 compra) e um gasto médio de apenas \$203, a estratégia para esse grupo pode ser tentar reativá-los com ofertas muito agressivas ou apenas focar os esforços em outros clientes mais lucrativos.
-
 <br>
 
 ## Estrutura do projeto

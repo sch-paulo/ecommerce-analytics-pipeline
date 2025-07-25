@@ -148,7 +148,6 @@ For this analysis, we divided each RFM metric (Recency of days since last purcha
 - **At Risk**: Customers who have not purchased in a while but have had a good history. With an average recency of 104 days, low frequency (1.7 purchase), and an average monetary value of $392, they need re-engagement campaigns to prevent them from becoming “Lost”.
 
 - **Lost**: These represent a significant portion of the customer base that has not purchased in a long time. With an average recency of 222 days, very low frequency (1.2 purchase), and an average spend of only $203, the strategy for this group may be to try to reactivate them with very aggressive offers, or to focus efforts on other segments.
-
 <br>
 
 ## Project Structure
