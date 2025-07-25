@@ -8,6 +8,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def load_countries(session, df):
+    """
+    Loads country data into the database session.
+
+    Parameters
+    ----------
+    session: sqlalchemy.orm.Session
+        The SQLAlchemy session to which the data will be added.
+    df: pandas.DataFrame
+        DataFrame containing 'CountryID' and 'CountryName' columns.
+    """
     countries = [
         CountryModel(country_id=row['CountryID'], 
                      country_name=row['CountryName'])
@@ -17,6 +27,16 @@ def load_countries(session, df):
     print(f"Added {len(df)} rows to 'countries' table (not committed yet).")
 
 def load_customers(session, df):
+    """
+    Loads customer data into the database session.
+
+    Parameters
+    ----------
+    session: sqlalchemy.orm.Session
+        The SQLAlchemy session to which the data will be added.
+    df: pandas.DataFrame
+        DataFrame containing 'CustomerID', 'CountryID', and 'CustomerType'.
+    """
     customers = [
         CustomerModel(customer_id=row['CustomerID'], 
                       country_id=row['CountryID'], 
@@ -27,6 +47,16 @@ def load_customers(session, df):
     print(f"Added {len(df)} rows to 'customers' table (not committed yet).")
 
 def load_products(session, df):
+    """
+    Loads product data into the database session.
+
+    Parameters
+    ----------
+    session: sqlalchemy.orm.Session
+        The SQLAlchemy session to which the data will be added.
+    df: pandas.DataFrame
+        DataFrame containing 'StockCode' and 'Description'.
+    """
     products = [
         ProductModel(stock_code=row['StockCode'], 
                      description=row['Description'])
@@ -36,6 +66,16 @@ def load_products(session, df):
     print(f"Added {len(df)} rows to 'products' table (not committed yet).")
 
 def load_invoices(session, df):
+    """
+    Loads invoice data into the database session.
+
+    Parameters
+    ----------
+    session: sqlalchemy.orm.Session
+        The SQLAlchemy session to which the data will be added.
+    df: pandas.DataFrame
+        DataFrame containing 'InvoiceNo', 'InvoiceDate', and 'CustomerID'.
+    """
     invoices = [
         InvoiceModel(invoice_no=row['InvoiceNo'], 
                      invoice_date=row['InvoiceDate'], 
@@ -46,6 +86,18 @@ def load_invoices(session, df):
     print(f"Added {len(df)} rows to 'invoices' table (not committed yet).")
 
 def load_transactions(session, df):
+    """
+    Loads transaction data into the database session.
+
+    Parameters
+    ----------
+    session: sqlalchemy.orm.Session
+        The SQLAlchemy session to which the data will be added.
+    df: pandas.DataFrame
+        DataFrame with transaction data including:
+        'InvoiceNo', 'StockCode', 'LineNo', 'Quantity', 'UnitPrice', 
+        'TotalAmount', and 'TransactionType'.
+    """
     transactions = [
         TransactionModel(invoice_no=row['InvoiceNo'], 
                          stock_code=row['StockCode'], 

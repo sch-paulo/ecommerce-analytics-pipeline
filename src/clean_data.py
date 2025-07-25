@@ -1,8 +1,30 @@
 import pandas as pd
 from config.country_map import COUNTRY_MAP
-
+import warnings
+warnings.filterwarnings("ignore")
 
 def clean_and_transform_data(df: pd.DataFrame):
+    """
+    Cleans and enriches raw transactional data for normalization.
+
+    Steps performed:
+    - Removes duplicate rows.
+    - Converts date columns.
+    - Fills missing customer IDs and descriptions.
+    - Infers customer and transaction types.
+    - Computes total transaction amount.
+    - Maps countries to internal IDs.
+
+    Parameters
+    ----------
+    df: pandas.DataFrame
+        Raw transactional data.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Transformed and cleaned DataFrame ready for normalization.
+    """
     df = df.drop_duplicates()
 
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
@@ -34,7 +56,25 @@ def clean_and_transform_data(df: pd.DataFrame):
 
 
 def normalize_table(df: pd.DataFrame):
-    # Countries table
+    """
+    Normalizes a transactional DataFrame into separate dimension and fact tables.
+
+    Parameters
+    ----------
+    df: pandas.DataFrame
+        Cleaned transactional DataFrame.
+
+    Returns
+    -------
+    tuple of pandas.DataFrame
+        A tuple containing:
+        - countries_table (CountryID, CountryName)
+        - invoices_table (InvoiceNo, InvoiceDate, CustomerID)
+        - customers_table (CustomerID, CountryID, CustomerType)
+        - products_table (StockCode, Description)
+        - transactions_table (InvoiceNo, StockCode, Quantity, UnitPrice, 
+          TotalAmount, TransactionType, LineNo)
+    """
     countries_table = (
         df[["CountryID", "Country"]].drop_duplicates().reset_index(drop=True)
     )
@@ -43,15 +83,12 @@ def normalize_table(df: pd.DataFrame):
     )
     countries_table = countries_table.rename(columns={"Country": "CountryName"})
 
-    # Invoices table
     invoices_table = df[["InvoiceNo", "InvoiceDate", "CustomerID"]]
     invoices_table = invoices_table.groupby("InvoiceNo").first().reset_index()
 
-    # Customers table
     customers_table = df[["CustomerID", "CountryID", "CustomerType"]]
     customers_table = customers_table.groupby("CustomerID").first().reset_index()
 
-    # Products table
     products_table = df[["StockCode", "Description"]]
     products_table = (
         products_table.groupby("StockCode")["Description"]
@@ -59,7 +96,6 @@ def normalize_table(df: pd.DataFrame):
         .reset_index()
     )
 
-    # Transactions table
     transactions_table = df[
         [
             "InvoiceNo",
@@ -84,9 +120,6 @@ def normalize_table(df: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    import warnings
-
-    warnings.filterwarnings("ignore")
     df = pd.read_csv("data/data.csv", encoding="latin1")
     df = clean_and_transform_data(df)
     (
